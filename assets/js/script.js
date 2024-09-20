@@ -52,6 +52,8 @@ function createTaskCard(task) {
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList(event) {
+  let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+  
   if (!taskList) {
     taskList = [];
   }
@@ -99,6 +101,7 @@ function renderTaskList(event) {
 // Modal contains: task title, due date, task description, and add task button.
 
 function handleAddTask(event) {
+  let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
   event.preventDefault();
   event.stopPropagation();
 
@@ -111,13 +114,19 @@ function handleAddTask(event) {
   };
   console.log(task);
   taskList.push(task);
-  localStorage.setItem("task", JSON.stringify(taskList));
+  localStorage.setItem("tasks", JSON.stringify(taskList));
   renderTaskList(event);
 }
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
-
+const id = $(event.target).data("task-id");
+let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+let updatedTasks = taskList.filter(task => {
+  return task.id !== id;
+})
+localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+renderTaskList();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
@@ -137,7 +146,7 @@ function handleDrop(event, ui) {
     }
   }
 
-  localStorage.setItem("task", JSON.stringify(taskList));
+  localStorage.setItem("tasks", JSON.stringify(taskList));
   renderTaskList();
 }
 
@@ -147,6 +156,8 @@ $(document).ready(function () {
   $("#addTaskBtn").on("click", function (event) {
     handleAddTask(event);
   });
+
+  renderTaskList();
   // Submit button
   // Modal pop up
   // User clicks add task button
